@@ -41,11 +41,11 @@ async function startCongratulating(chatId: string) {
   try {
     db = await loadDb(GOOGLE_API_KEY, SPREADSHEET_ID, SHEET_TITLE)
   } catch (error) {
-    console.error(error)
+    throw new Error(`Error DB loading: ${error}`)
   }
-  if (!db) { throw new Error("Error DB loading: ", error) }
+  // if (!db) {  }
 
-  sdf
+  // sdf
   // .then(res => {
   //   console.log(JSON.stringify(res, undefined, 2))
   // })
