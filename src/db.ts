@@ -61,6 +61,12 @@ export type BirthdayCongratulation = {
   congratulations: string
 }
 
+export namespace BirthdayCongratulation {
+  export function toString(birthdayCongrat: BirthdayCongratulation) {
+    return JSON.stringify(birthdayCongrat)
+  }
+}
+
 export type Db = BirthdayCongratulation[]
 
 export async function loadDb(

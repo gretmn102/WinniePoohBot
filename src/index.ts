@@ -1,6 +1,6 @@
 import TelegramBot from "node-telegram-bot-api"
 import dotenv from "dotenv"
-import { loadDb } from "./db"
+import { BirthdayCongratulation, loadDb } from "./db"
 
 function startPolling(bot: TelegramBot) {
   bot.onText(/\/start/, async msg => {
@@ -10,7 +10,8 @@ function startPolling(bot: TelegramBot) {
   // ['ready' event ? #801](https://github.com/yagop/node-telegram-bot-api/issues/801)
   bot.startPolling()
     .then(() => {
-      console.log("Bot is ready!")
+      console.log("Бот запущен.")
+      console.log("Наберите /start в интересующем вас в чате, чтобы получить идентификатор.")
     })
     .catch(err => {
       console.error(`Error: ${err}`)
@@ -37,21 +38,40 @@ async function startCongratulating(chatId: string) {
     throw new Error("Please, add SHEET_TITLE in .env")
   }
 
+  console.log("Загружается база данных...")
   let db
   try {
     db = await loadDb(GOOGLE_API_KEY, SPREADSHEET_ID, SHEET_TITLE)
   } catch (error) {
     throw new Error(`Error DB loading: ${error}`)
   }
-  // if (!db) {  }
 
-  // sdf
-  // .then(res => {
-  //   console.log(JSON.stringify(res, undefined, 2))
-  // })
-  // .catch(err => {
-  //   console.error(err)
-  // })
+  console.log("Загрузка успешно завершена.")
+
+  const now = new Date()
+  const day = now.getDate()
+  const month = now.getMonth()
+
+  const congrats = db.filter(({ birthday }) => (
+    birthday.day === day && birthday.month == month
+  ))
+  if (congrats.length === 0) {
+    console.log("Похоже, сегодня некого поздравлять.")
+    return
+  }
+
+  congrats
+    .forEach(congrat => {
+      const congratString = BirthdayCongratulation.toString(congrat)
+      console.log(`Поздравляю ${congratString}...`)
+      bot.sendMessage(chatId, congrat.congratulations)
+        .then(() => {
+          console.log(`Поздравил ${congratString}!`)
+        })
+        .catch(err => {
+          console.error(`Не смог поздравить ${congratString} по следующей причине: ${err}`)
+        })
+    })
 }
 
 dotenv.config()
@@ -67,7 +87,9 @@ const bot = new TelegramBot(TELEGRAM_BOT_TOKEN)
 const CHAT_ID = process.env.CHAT_ID
 
 if (!CHAT_ID) {
+  console.log("Переменная окружения CHAT_ID не определена, так что включается режим polling.")
+  console.log("Подождите, пока запустится бот.")
   startPolling(bot)
 } else {
-  startCongratulating(CHAT_ID)
+  void startCongratulating(CHAT_ID)
 }
