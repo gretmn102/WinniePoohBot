@@ -1,6 +1,6 @@
 # WinniePoohBot
 
-Бот для [Telegram](https://telegram.org/), который поздравляет с днем рождения. В качестве базы данных использует Google таблицу.
+Бот для [Telegram](https://telegram.org/), который поздравляет с днем рождения. В качестве базы данных использует [Google таблицу](https://docs.google.com/spreadsheets/u/0/?pli=1).
 
 ## Как работает
 
@@ -22,4 +22,16 @@
 
 ```ini
 TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
+; https://docs.google.com/spreadsheets/d/<SPREADSHEET_ID>/edit?gid=0#gid=0
+SPREADSHEET_ID=YOUR_SPREADSHEET_ID
+SHEET_TITLE=Лист1
 ```
+
+### Получение Google API Key
+
+* Открыть [Google Cloud Console](https://console.cloud.google.com/)
+* Создать новый проект (или использовать существующий)
+* Создать API Key
+* В разделе **APIs & Services → Library** включить **Google Sheets API**
+  <!-- https://console.developers.google.com/apis/api/sheets.googleapis.com/overview?project=1038693916349 -->
