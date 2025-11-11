@@ -77,9 +77,8 @@ export async function loadDb(
       "ROWS",
     )
   } catch (err) {
-    console.error(err)
+    throw new Error(`Response error: ${err}`)
   }
-  if (!response) { throw new Error("Response is null") }
   const valueRanges = response.valueRanges
   if (valueRanges.length === 0) {
     throw new Error("valueRanges length is null")
