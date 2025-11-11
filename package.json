@@ -1,0 +1,34 @@
+{
+  "name": "winnie-pooh-bot",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json --outDir dist",
+    "start": "cd dist && node index.js",
+    "dev": "npm run build && npm run start",
+    "test": "vitest",
+    "deploy:clear": "shx rm -rf dist/*",
+    "deploy:copy-env": "shx cp .env dist/.env",
+    "clear": "npm run deploy:clear && npm run deploy:copy-env"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.66.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.7.5",
+    "@types/node-telegram-bot-api": "^0.64.7",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "eslint": "^8.57.1",
+    "rollup": "~4.14.1",
+    "shx": "^0.3.4",
+    "typescript": "^5.6.3",
+    "vite": "~5.2.8",
+    "vitest": "~1.4.0"
+  }
+}
