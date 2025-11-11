@@ -4,13 +4,13 @@ import { loadDb } from "./db"
 
 dotenv.config()
 
-const token = process.env.TOKEN
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
 
-if (!token) {
-  throw new Error("Please, add TOKEN in .env")
+if (!TELEGRAM_BOT_TOKEN) {
+  throw new Error("Please, add TELEGRAM_BOT_TOKEN in .env")
 }
 
-const bot = new TelegramBot(token)
+const bot = new TelegramBot(TELEGRAM_BOT_TOKEN)
 
 bot.onText(/\/start/, async msg => {
   await bot.sendMessage(msg.chat.id, `ID чата: ${msg.chat.id}`)

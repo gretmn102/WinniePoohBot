@@ -21,7 +21,7 @@
 Создать `.env` со следующим содержимым:
 
 ```ini
-TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+TELEGRAM_BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
 GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
 ; https://docs.google.com/spreadsheets/d/<SPREADSHEET_ID>/edit?gid=0#gid=0
 SPREADSHEET_ID=YOUR_SPREADSHEET_ID
