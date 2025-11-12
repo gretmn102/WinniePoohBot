@@ -70,7 +70,13 @@
 
 ### Создание бота в Telegram
 
-<!-- todo -->
+* Открыть [BotFather](https://t.me/BotFather)
+* Вызвать `/newbot`
+* Ввести название для нового бота
+
+BotFather должен выдать токен после фразы:
+
+> Use this token to access the HTTP API
 
 ### Получение Google API Key
 
