@@ -89,9 +89,9 @@ export async function loadDb(
   if (valueRanges.length === 0) {
     throw new Error("valueRanges length is null")
   }
-
-  const db: Db = valueRanges[0]
-    .values
+  const values = valueRanges[0].values
+  if (!values) { return [] }
+  const db: Db = values
     .map(([rawBirthday, congratulations]) => {
       const birthdayResult = Birthday.tryParse(rawBirthday)
       if (birthdayResult[0] === "Error") {
