@@ -1,6 +1,7 @@
 import TelegramBot from "node-telegram-bot-api"
 import dotenv from "dotenv"
 import { BirthdayCongratulation, loadDb } from "./db"
+import { getSheetTitles } from "./googleSheetApi"
 
 function startPolling(bot: TelegramBot) {
   bot.onText(/\/start/, async msg => {
@@ -33,12 +34,25 @@ async function startCongratulating(chatId: string) {
     throw new Error("Please, add SPREADSHEET_ID in .env")
   }
 
-  const SHEET_TITLE = process.env.SHEET_TITLE
-  if (!SHEET_TITLE) {
-    throw new Error("Please, add SHEET_TITLE in .env")
-  }
+  const SHEET_TITLE = await (async () => {
+    const SHEET_TITLE = process.env.SHEET_TITLE
+    if (SHEET_TITLE) {
+      return SHEET_TITLE
+    }
+    let response
+    try {
+      response = await getSheetTitles(GOOGLE_API_KEY, SPREADSHEET_ID)
+    } catch (error) {
+      throw new Error(`getSheetTitles throw error: ${error}`)
+    }
+    const sheets = response.sheets
+    if (sheets.length === 0) {
+      throw new Error("Листы отсутствуют в документе. Создайте хотя бы один лист!")
+    }
+    return sheets[0].properties.title
+  })()
 
-  console.log("Загружается база данных...")
+  console.log(`Загружается база данных из ${SHEET_TITLE}...`)
   let db
   try {
     db = await loadDb(GOOGLE_API_KEY, SPREADSHEET_ID, SHEET_TITLE)
