@@ -18,15 +18,59 @@
 
 ## Установка
 
-Создать `.env` со следующим содержимым:
+<!-- todo: описать, откуда качать вообще -->
 
-```ini
-TELEGRAM_BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
-GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
-; https://docs.google.com/spreadsheets/d/<SPREADSHEET_ID>/edit?gid=0#gid=0
-SPREADSHEET_ID=YOUR_SPREADSHEET_ID
-SHEET_TITLE=Лист1
-```
+* Создать `.env`
+* Добавить в него токен Телеграм бота (см. [Создание бота в Телеграм](#создание-бота-в-telegram)):
+
+  ```ini
+  TELEGRAM_BOT_TOKEN=YOUR_TELEGRAM_BOT_TOKEN
+  ```
+
+* Добавить в него ключ Google API (см. [получение ключа](#получение-google-api-key)):
+
+  ```ini
+  GOOGLE_API_KEY=YOUR_GOOGLE_API_KEY
+  ```
+
+* Создать [Гугл-таблицу](https://docs.google.com/spreadsheets/u/0/?pli=1)
+* Заполнить ее (см. [таблицу-пример](https://docs.google.com/spreadsheets/d/12j1RWPQNSKQ_q_SWJK6yjNBQQJ8AMtrvt0dRvNBQYFw/edit?gid=0#gid=0))
+* Сделать таблицу публичной:
+
+  * Нажать **Настройки доступа**
+  * Выбрать **Все, у кого есть ссылка** в графе **Общий доступ**
+* Скопировать ссылку
+* Скопировать ID таблицы из ссылки:
+
+  ```text
+  https://docs.google.com/spreadsheets/d/<SPREADSHEET_ID>/edit?gid=0#gid=0
+  ```
+
+* Вставить ID таблицы в `.env`:
+
+  ```ini
+  SPREADSHEET_ID=YOUR_SPREADSHEET_ID
+  ```
+
+* Запустить бот:
+
+  ```bash
+  node index.js
+  ```
+
+* Пригласить бота на свой сервер
+* Написать `/start`, чтобы получить ID чата
+* Вставить ID чата в `.env`:
+
+  ```bash
+  CHAT_ID=YOUR_CHAT_ID
+  ```
+
+Бот можно закрывать. Теперь достаточно его запустить, чтобы он сделал свое дело и благополучно закрылся.
+
+### Создание бота в Telegram
+
+<!-- todo -->
 
 ### Получение Google API Key
 
