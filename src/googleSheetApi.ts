@@ -44,3 +44,35 @@ export async function getBatchValues(
   const response: BatchValuesResponse = await rawResponse.json()
   return response
 }
+
+export type SheetTitlesResponse = {
+  sheets: {
+    properties: {
+      title: string
+    }
+  }[]
+}
+
+export async function getSheetTitles(
+  apiKey: string,
+  spreadSheetId: string,
+) {
+  const urlQuery = UrlQuery.build([
+    UrlQueryFragment.create("fields", "sheets.properties.title"),
+    UrlQueryFragment.create("key", apiKey)
+  ])
+
+  const urlFragment = [
+    "https://sheets.googleapis.com",
+    "v4",
+    "spreadsheets",
+    spreadSheetId,
+  ]
+    .join("/")
+
+  const url = `${urlFragment}?${urlQuery}`
+
+  const rawResponse = await fetch(url)
+  const response: SheetTitlesResponse = await rawResponse.json()
+  return response
+}
