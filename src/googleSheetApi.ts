@@ -5,7 +5,7 @@ export type MajorDimension = "ROWS" | "COLUMNS"
 export type ValueRanges = {
   range: string
   majorDimension: MajorDimension
-  values: string[][]
+  values?: string[][]
 }
 
 export type BatchValuesResponse = {
