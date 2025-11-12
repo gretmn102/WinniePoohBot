@@ -1,3 +1,5 @@
+import { UrlQuery, UrlQueryFragment } from "./lib/urlQuery"
+
 export type MajorDimension = "ROWS" | "COLUMNS"
 
 export type ValueRanges = {
@@ -17,17 +19,15 @@ export async function getBatchValues(
   ranges: string[],
   majorDimension?: MajorDimension,
 ) {
-  const urlQuery = [
-    ranges.map(ranges => ["ranges", ranges]),
-    majorDimension ? [["majorDimension", majorDimension]] : [],
-    [["key", apiKey]],
-  ]
-    .flat()
-    .map(keyValue => {
-      const [key, value] = keyValue
-      return `${key}=${encodeURIComponent(value)}`
-    })
-    .join("&")
+  const urlQuery = UrlQuery.build([
+    ranges.map(ranges => (
+      UrlQueryFragment.create("ranges", ranges)
+    )),
+    majorDimension ? [
+      UrlQueryFragment.create("majorDimension", majorDimension)
+    ] : [],
+    [UrlQueryFragment.create("key", apiKey)],
+  ].flat())
 
   const urlFragment = [
     "https://sheets.googleapis.com",
