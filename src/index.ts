@@ -26,6 +26,10 @@ function startPolling(bot: TelegramBot) {
 }
 
 async function startCongratulating(chatId: string) {
+  if (!fs.existsSync("birthday_db.json")) {
+    console.error("no db file")
+    return
+  }
   const db_text = fs.readFileSync("birthday_db.json").toString()
   if (typeof db_text === "undefined" || db_text === null || db_text.length === 0) {
     console.error("no db")
@@ -37,6 +41,14 @@ async function startCongratulating(chatId: string) {
   const now = new Date()
   const day = now.getDate()
   const month = now.getMonth()
+  if (fs.existsSync("last_congrats.txt")) {
+    const lastCongrats = fs.readFileSync("last_congrats.txt").toString()
+    if (lastCongrats === ("" + day + month)) {
+      console.log("Сегодня мы уже проверяли поздравления.")
+      return
+    }
+  }
+  fs.writeFileSync("last_congrats.txt", "" + day + month)
 
   const congrats = db.filter((birthday: BirthdayType) => (
     birthday.day === day && birthday.month == month
