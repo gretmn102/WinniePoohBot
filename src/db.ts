@@ -89,7 +89,10 @@ export async function loadDb(
   if (valueRanges.length === 0) {
     throw new Error("valueRanges length is null")
   }
-  const values = valueRanges[0].values
+  const values = valueRanges[0].values.filter(function(value, index) {
+    // Пропускаем строку заголовков.
+    return (index > 0)
+  })
   if (!values) { return [] }
   const db: Db = values
     .map(([rawBirthday, congratulations]) => {

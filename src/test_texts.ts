@@ -1,4 +1,4 @@
-import fs from "fs"
+import fs from "node:fs"
 
 const db = fs.readFileSync("birthday_db.json")
 if (typeof db === "undefined" || db === null || db.length === 0) {
