@@ -7,5 +7,11 @@ if (typeof db === "undefined" || db === null || db.length === 0) {
 }
 db = JSON.parse(db)
 db.forEach(function(birthday: any) {
-  console.log(birthday.congratulations)
+  if (typeof birthday.congratulations !== "undefined" && birthday.congratulations.length > 0) {
+    console.log(birthday.congratulations)
+  } else {
+    if (typeof birthday.nicks !== "undefined" && birthday.nicks.length > 0) {
+      console.log(birthday.nicks)
+    }
+  }
 })

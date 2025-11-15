@@ -79,7 +79,7 @@ export async function loadDb(
     response = await getBatchValues(
       googleApiKey,
       spreadSheetId,
-      [`${sheetTitle}!A:B`],
+      [`${sheetTitle}!A:C`],
       "ROWS",
     )
   } catch (err) {
@@ -95,12 +95,12 @@ export async function loadDb(
   })
   if (!values) { return [] }
   const db: Db = values
-    .map(([rawBirthday, congratulations]) => {
+    .map(([rawBirthday, nicks, congratulations]) => {
       const birthdayResult = Birthday.tryParse(rawBirthday)
       if (birthdayResult[0] === "Error") {
         throw new Error(`Error parse ${rawBirthday}: ${birthdayResult[1]}`)
       }
-      return { birthday: birthdayResult[1], congratulations }
+      return { birthday: birthdayResult[1], nicks, congratulations }
     })
 
   return db
