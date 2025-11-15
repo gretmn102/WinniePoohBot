@@ -1,17 +1,15 @@
-import dotenv from "dotenv"
+import config from "./config"
 import { loadDb } from "./db"
 import { getSheetTitles } from "./googleSheetApi"
-import fs from "fs"
+import fs from "node:fs"
 
 async function download() {
-  dotenv.config()
-
-  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
+  const GOOGLE_API_KEY = config.googleApiKey
   if (!GOOGLE_API_KEY) {
     throw new Error("Please, add GOOGLE_API_KEY in .env")
   }
 
-  const SPREADSHEET_ID = process.env.SPREADSHEET_ID
+  const SPREADSHEET_ID = config.spreadsheetId
   if (!SPREADSHEET_ID) {
     throw new Error("Please, add SPREADSHEET_ID in .env")
   }
@@ -27,8 +25,11 @@ async function download() {
     } catch (error) {
       throw new Error(`getSheetTitles throw error: ${error}`)
     }
+    if (typeof response.error !== "undefined") {
+      throw new Error(response.error.message)
+    }
     const sheets = response.sheets
-    if (sheets.length === 0) {
+    if (typeof sheets === "undefined" || sheets.length === 0) {
       throw new Error("Листы отсутствуют в документе. Создайте хотя бы один лист!")
     }
     return sheets[0].properties.title

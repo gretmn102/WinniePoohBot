@@ -1,0 +1,13 @@
+export class Config {
+  public googleApiKey = ""
+  public telegramBotToken = ""
+  public spreadsheetId = ""
+  public chatId = ""
+}
+
+const conf = new Config()
+conf.googleApiKey = ""
+conf.telegramBotToken = ""
+conf.spreadsheetId = ""
+conf.chatId = ""
+export default conf
