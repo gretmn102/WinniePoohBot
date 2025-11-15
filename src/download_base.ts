@@ -1,7 +1,7 @@
 import dotenv from "dotenv"
 import { loadDb } from "./db"
 import { getSheetTitles } from "./googleSheetApi"
-import memjs from "memjs"
+import fs from "fs"
 
 async function download() {
   dotenv.config()
@@ -35,10 +35,9 @@ async function download() {
   })()
 
   let db
-  const client = memjs.Client.create()
   try {
     db = await loadDb(GOOGLE_API_KEY, SPREADSHEET_ID, SHEET_TITLE)
-    client.set("birthday_db", JSON.stringify(db), { expires: 60 * 60 * 24 })
+    fs.writeFileSync("birthday_db.json", JSON.stringify(db))
   } catch (error) {
     throw new Error(`Error DB loading: ${error}`)
   }
