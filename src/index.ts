@@ -50,8 +50,8 @@ async function startCongratulating(chatId: string) {
   }
   fs.writeFileSync("last_congrats.txt", "" + day + month)
 
-  const congrats = db.filter((birthday: BirthdayType) => (
-    birthday.day === day && birthday.month == month
+  const congrats = db.filter((row: any) => (
+    row.birthday.day == day && row.birthday.month == month
   ))
   if (congrats.length === 0) {
     console.log("Похоже, сегодня некого поздравлять.")
