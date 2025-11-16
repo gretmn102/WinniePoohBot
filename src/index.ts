@@ -48,7 +48,6 @@ async function startCongratulating(chatId: string) {
       return
     }
   }
-  fs.writeFileSync("last_congrats.txt", "" + day + month)
 
   const congrats = db.filter((row: any) => (
     row.birthday.day == day && row.birthday.month == month
@@ -70,6 +69,7 @@ async function startCongratulating(chatId: string) {
           console.error(`Не смог поздравить ${congratString} по следующей причине: ${err}`)
         })
     })
+  fs.writeFileSync("last_congrats.txt", "" + day + month)
 }
 
 const TELEGRAM_BOT_TOKEN = config.telegramBotToken
