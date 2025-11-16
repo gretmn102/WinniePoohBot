@@ -57,6 +57,7 @@ async function startCongratulating(chatId: string) {
     return
   }
 
+  let error = false
   congrats
     .forEach((congrat: any) => {
       const congratString = BirthdayCongratulation.toString(congrat)
@@ -67,9 +68,12 @@ async function startCongratulating(chatId: string) {
         })
         .catch(err => {
           console.error(`Не смог поздравить ${congratString} по следующей причине: ${err}`)
+          error = true
         })
     })
-  fs.writeFileSync("last_congrats.txt", "" + day + month)
+  if (error === false) {
+    fs.writeFileSync("last_congrats.txt", "" + day + month)
+  }
 }
 
 const TELEGRAM_BOT_TOKEN = config.telegramBotToken
