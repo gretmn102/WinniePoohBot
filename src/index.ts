@@ -1,7 +1,9 @@
 import TelegramBot from "node-telegram-bot-api"
-import dotenv from "dotenv"
-import { BirthdayCongratulation, loadDb } from "./db"
+import config from "./config"
+import { BirthdayCongratulation, loadDb, BirthdayType } from "./db"
 import { getSheetTitles } from "./googleSheetApi"
+import fs from "node:fs"
+import generate_text from "./generate_text"
 
 function startPolling(bot: TelegramBot) {
   bot.onText(/\/start/, async msg => {
@@ -24,73 +26,57 @@ function startPolling(bot: TelegramBot) {
 }
 
 async function startCongratulating(chatId: string) {
-  const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY
-  if (!GOOGLE_API_KEY) {
-    throw new Error("Please, add GOOGLE_API_KEY in .env")
+  if (!fs.existsSync("birthday_db.json")) {
+    console.error("no db file")
+    return
   }
-
-  const SPREADSHEET_ID = process.env.SPREADSHEET_ID
-  if (!SPREADSHEET_ID) {
-    throw new Error("Please, add SPREADSHEET_ID in .env")
+  const db_text = fs.readFileSync("birthday_db.json").toString()
+  if (typeof db_text === "undefined" || db_text === null || db_text.length === 0) {
+    console.error("no db")
+    return
   }
-
-  const SHEET_TITLE = await (async () => {
-    const SHEET_TITLE = process.env.SHEET_TITLE
-    if (SHEET_TITLE) {
-      return SHEET_TITLE
-    }
-    let response
-    try {
-      response = await getSheetTitles(GOOGLE_API_KEY, SPREADSHEET_ID)
-    } catch (error) {
-      throw new Error(`getSheetTitles throw error: ${error}`)
-    }
-    const sheets = response.sheets
-    if (sheets.length === 0) {
-      throw new Error("Листы отсутствуют в документе. Создайте хотя бы один лист!")
-    }
-    return sheets[0].properties.title
-  })()
-
-  console.log(`Загружается база данных из ${SHEET_TITLE}...`)
-  let db
-  try {
-    db = await loadDb(GOOGLE_API_KEY, SPREADSHEET_ID, SHEET_TITLE)
-  } catch (error) {
-    throw new Error(`Error DB loading: ${error}`)
-  }
-
+  const db = JSON.parse(db_text)
   console.log("Загрузка успешно завершена.")
 
   const now = new Date()
   const day = now.getDate()
   const month = now.getMonth()
+  if (fs.existsSync("last_congrats.txt")) {
+    const lastCongrats = fs.readFileSync("last_congrats.txt").toString()
+    if (lastCongrats === ("" + day + month)) {
+      console.log("Сегодня мы уже проверяли поздравления.")
+      return
+    }
+  }
 
-  const congrats = db.filter(({ birthday }) => (
-    birthday.day === day && birthday.month == month
+  const congrats = db.filter((row: any) => (
+    row.birthday.day == day && row.birthday.month == month
   ))
   if (congrats.length === 0) {
     console.log("Похоже, сегодня некого поздравлять.")
     return
   }
 
+  let error = false
   congrats
-    .forEach(congrat => {
+    .forEach((congrat: any) => {
       const congratString = BirthdayCongratulation.toString(congrat)
       console.log(`Поздравляю ${congratString}...`)
-      bot.sendMessage(chatId, congrat.congratulations)
+      bot.sendMessage(chatId, generate_text(congrat))
         .then(() => {
           console.log(`Поздравил ${congratString}!`)
         })
         .catch(err => {
           console.error(`Не смог поздравить ${congratString} по следующей причине: ${err}`)
+          error = true
         })
     })
+  if (error === false) {
+    fs.writeFileSync("last_congrats.txt", "" + day + month)
+  }
 }
 
-dotenv.config()
-
-const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN
+const TELEGRAM_BOT_TOKEN = config.telegramBotToken
 
 if (!TELEGRAM_BOT_TOKEN) {
   throw new Error("Please, add TELEGRAM_BOT_TOKEN in .env")
@@ -98,7 +84,7 @@ if (!TELEGRAM_BOT_TOKEN) {
 
 const bot = new TelegramBot(TELEGRAM_BOT_TOKEN)
 
-const CHAT_ID = process.env.CHAT_ID
+const CHAT_ID = config.chatId
 
 if (!CHAT_ID) {
   console.log("Переменная окружения CHAT_ID не определена, так что включается режим polling.")

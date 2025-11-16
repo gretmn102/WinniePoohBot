@@ -6,8 +6,10 @@
   "scripts": {
     "build": "tsc --project tsconfig.build.json --outDir dist",
     "start": "cd dist && node index.js",
+    "download": "cd dist && node download_base.js",
     "dev": "npm run build && npm run start",
     "test": "vitest",
+    "test_texts": "cd dist && node test_texts.js",
     "deploy:clear": "shx rm -rf dist/*",
     "deploy:copy-env": "shx cp .env dist/.env",
     "clear": "npm run deploy:clear && npm run deploy:copy-env"
@@ -17,7 +19,6 @@
   "license": "ISC",
   "dependencies": {
     "@fering-org/functional-helper": "^0.6.2",
-    "dotenv": "^16.4.5",
     "node-telegram-bot-api": "^0.66.0"
   },
   "devDependencies": {

@@ -17,10 +17,10 @@ export enum Month {
   December,
 }
 
-export type Birthday = { day: number, month: Month }
+export type BirthdayType = { day: number, month: Month }
 
 export namespace Birthday {
-  export function tryParse(input: string): Result<Birthday, string> {
+  export function tryParse(input: string): Result<BirthdayType, string> {
     const pattern = /(\d+)\s*([а-яА-Я]+)/
     const result = pattern.exec(input)
     if (!result) {
@@ -57,7 +57,7 @@ export namespace Birthday {
 }
 
 export type BirthdayCongratulation = {
-  birthday: Birthday
+  birthday: BirthdayType
   congratulations: string
 }
 
@@ -79,25 +79,31 @@ export async function loadDb(
     response = await getBatchValues(
       googleApiKey,
       spreadSheetId,
-      [`${sheetTitle}!A:B`],
+      [`${sheetTitle}!A:C`],
       "ROWS",
     )
   } catch (err) {
     throw new Error(`Response error: ${err}`)
   }
   const valueRanges = response.valueRanges
-  if (valueRanges.length === 0) {
+  if (typeof valueRanges === "undefined" || valueRanges.length === 0) {
     throw new Error("valueRanges length is null")
   }
-  const values = valueRanges[0].values
+  if (typeof valueRanges[0] === "undefined" || typeof valueRanges[0].values === "undefined") {
+    throw new Error("valueRanges[0] is undefined")
+  }
+  const values = valueRanges[0].values.filter(function(value, index) {
+    // Пропускаем строку заголовков.
+    return (index > 0)
+  })
   if (!values) { return [] }
   const db: Db = values
-    .map(([rawBirthday, congratulations]) => {
+    .map(([rawBirthday, nicks, congratulations]) => {
       const birthdayResult = Birthday.tryParse(rawBirthday)
       if (birthdayResult[0] === "Error") {
         throw new Error(`Error parse ${rawBirthday}: ${birthdayResult[1]}`)
       }
-      return { birthday: birthdayResult[1], congratulations }
+      return { birthday: birthdayResult[1], nicks, congratulations }
     })
 
   return db

@@ -1,3 +1,6 @@
 /node_modules
 /dist
-/.env
+/src/config.ts
+/dist/config.js
+/birthday_db.json
+/last_congrats.txt

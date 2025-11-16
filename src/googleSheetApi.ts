@@ -50,7 +50,8 @@ export type SheetTitlesResponse = {
     properties: {
       title: string
     }
-  }[]
+  }[],
+  error: any
 }
 
 export async function getSheetTitles(
